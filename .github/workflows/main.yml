@@ -20,9 +20,10 @@ jobs:
           php-version: '8.1'
 
       - name: Start PHP built-in server
-        run: |
-          php -S localhost:8000 -t . &
-          echo "PHP server started"
+        run: php -S localhost:8000 -t . &
+
+      - name: Wait for server to be ready
+        run: sleep 3
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v5
