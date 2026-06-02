@@ -32,4 +32,4 @@ jobs:
       run: php -S localhost:8000 &
 
     - name: Run Cypress E2E Tests (System Testing)
-      uses: cypress-io/github-action@v5
+      uses: cy.visit('http://localhost/toko-online-pjbl/')
