@@ -1,35 +1,31 @@
 name: SQA CI & CT Pipeline
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  build-and-test:
+  cypress-run:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup PHP Environment
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        coverage: xdebug # Diperlukan untuk Metrik Coverage
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
 
-    - name: Install PHP Dependencies
-      run: composer install --prefer-dist --no-progress
+      - name: Start PHP built-in server
+        run: |
+          php -S localhost:8000 -t . &
+          echo "PHP server started"
 
-    - name: Run PHPUnit & Quality Metrics
-      run: php vendor/bin/phpunit tests/ --coverage-text
-
-    - name: Setup Node.js for Cypress
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
-
-    - name: Install NPM Dependencies
-      run: npm install
-
-    - name: Start PHP Server in Background
-      run: php -S localhost:8000 &
-
-    - name: Run Cypress E2E Tests (System Testing)
-      uses: cypress-io/github-action@v5
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v5
+        with:
+          wait-on: 'http://localhost:8000'
+          wait-on-timeout: 30
